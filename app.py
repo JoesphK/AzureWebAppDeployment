@@ -7,10 +7,11 @@ app = Flask(__name__)
 
 app.secret_key = 'your secret key'
 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'password'
-app.config['MYSQL_DB'] = 'pythonlogin'
+app.config['MYSQL_HOST'] = 'youssefwebapp-server.mysql.database.azure.com'
+app.config['MYSQL_USER'] = 'psfeornoll'
+app.config['MYSQL_PASSWORD'] = 'Dm98YTwWoFcP$Vb2'
+app.config['MYSQL_DB'] = 'youssefwebapp-server'
+app.config['MYSQL_SSL_CA'] = 'BaltimoreCyberTrustRoot.crt.pem' # Path to your SSL certificate
 
 mysql = MySQL(app)
 
