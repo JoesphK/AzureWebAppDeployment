@@ -10,8 +10,9 @@ app.secret_key = 'your secret key'
 app.config['MYSQL_HOST'] = 'youssefwebapp-server.mysql.database.azure.com'
 app.config['MYSQL_USER'] = 'psfeornoll'
 app.config['MYSQL_PASSWORD'] = 'Dm98YTwWoFcP$Vb2'
-app.config['MYSQL_DB'] = 'youssefwebapp-server'
-app.config['MYSQL_SSL_CA'] = 'BaltimoreCyberTrustRoot.crt.pem' # Path to your SSL certificate
+app.config['MYSQL_DB'] = 'webapplogin'
+app.config['PORT'] = 3306
+app.config['MYSQL_SSL_CA'] = 'DigiCertGlobalRootG2.crt.pem' # Path to your SSL certificate
 
 mysql = MySQL(app)
 
