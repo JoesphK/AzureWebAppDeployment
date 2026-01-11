@@ -1,26 +1,23 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-import pyodbc
-
-def get_db_connection():
-    conn = pyodbc.connect(app.config['AZURE_SQL_CONNECTION_STRING'])
-    return conn
+from flask_mysqldb import MySQL
+import MySQLdb.cursors
 import re
 
 app = Flask(__name__)
 
 app.secret_key = 'your secret key'
 
-app.config['AZURE_SQL_CONNECTION_STRING'] = (
-    "DRIVER={ODBC Driver 17 for SQL Server};"
-    f"SERVER={app.config['MYSQL_HOST']},{app.config['PORT']};"
-    f"DATABASE={app.config['MYSQL_DB']};"
-    f"UID={app.config['MYSQL_USER']};"
-    f"PWD={app.config['MYSQL_PASSWORD']};"
-    "ENCRYPT=yes;"
-    "TrustServerCertificate=no;"
-    "Connection Timeout=30;"
-)
+app.config['MYSQL_HOST'] = 'serverazsqldb.database.windows.net'
+app.config['MYSQL_USER'] = 'Youssef'
+app.config['MYSQL_PASSWORD'] = 'GBG_Acadmey!'
+app.config['MYSQL_DB'] = 'AZSQLDB'
+app.config['PORT'] = 1433
+app.config['MYSQL_SSL_CA'] = 'DigiCertGlobalRootG2.crt.pem'
+app.config['MYSQL_SQL_ENCRYPT'] = 'optional'
+app.config['MYSQL_SQL_SSL_VERIFY_SERVER_CERT'] = False
 
+
+mysql = MySQL(app)
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
@@ -29,14 +26,13 @@ def login():
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         username = request.form['username']
         password = request.form['password']
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM accounts WHERE username = ? AND password = ?', (username, password))
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM accounts WHERE username = %s AND password = %s', (username, password,))
         account = cursor.fetchone()
         if account:
             session['loggedin'] = True
-            session['id'] = account[0] # Assuming id is the first column
-            session['username'] = account[1] # Assuming username is the second column
+            session['id'] = account['id']
+            session['username'] = account['username']
             msg = 'Logged in successfully!'
             return render_template('index.html', msg=msg)
         else:
@@ -57,9 +53,8 @@ def register():
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM accounts WHERE username = ?', (username,))
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM accounts WHERE username = %s', (username,))
         account = cursor.fetchone()
         if account:
             msg = 'Account already exists!'
@@ -70,8 +65,8 @@ def register():
         elif not username or not password or not email:
             msg = 'Please fill out the form!'
         else:
-            cursor.execute('INSERT INTO accounts (username, password, email) VALUES (?, ?, ?)', (username, password, email,))
-            conn.commit()
+            cursor.execute('INSERT INTO accounts VALUES (NULL, %s, %s, %s)', (username, password, email,))
+            mysql.connection.commit()
             msg = 'You have successfully registered!'
     elif request.method == 'POST':
         msg = 'Please fill out the form!'
@@ -86,33 +81,18 @@ def home():
 @app.route('/profile')
 def profile():
     if 'loggedin' in session:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute('SELECT id, username, email FROM accounts WHERE id = ?', (session['id'],))
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM accounts WHERE id = %s', (session['id'],))
         account = cursor.fetchone()
-        if account:
-            account_dict = {
-                'id': account[0],
-                'username': account[1],
-                'email': account[2]
-            }
-            return render_template('profile.html', account=account_dict)
+        return render_template('profile.html', account=account)
     return redirect(url_for('login'))
 
 @app.route('/users')
 def users():
     if 'loggedin' in session:
-        conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT id, username, email FROM accounts')
-        users_data = cursor.fetchall()
-        users = []
-        for user in users_data:
-            users.append({
-                'id': user[0],
-                'username': user[1],
-                'email': user[2]
-            })
+        users = cursor.fetchall()
         return render_template('users.html', users=users)
     return redirect(url_for('login'))
 
