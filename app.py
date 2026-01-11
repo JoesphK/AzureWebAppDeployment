@@ -11,7 +11,7 @@ app.config['MYSQL_HOST'] = 'serverazsqldb.database.windows.net'
 app.config['MYSQL_USER'] = 'Youssef'
 app.config['MYSQL_PASSWORD'] = 'GBG_Acadmey!'
 app.config['MYSQL_DB'] = 'AZSQLDB'
-app.config['PORT'] = 3306
+app.config['PORT'] = 1433
 app.config['MYSQL_SSL_CA'] = 'DigiCertGlobalRootG2.crt.pem' # Path to your SSL certificate
 
 mysql = MySQL(app)
