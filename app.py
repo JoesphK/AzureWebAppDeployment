@@ -10,17 +10,6 @@ app = Flask(__name__)
 
 app.secret_key = 'your secret key'
 
-<<<<<<< Updated upstream
-app.config['MYSQL_HOST'] = 'serverazsqldb.database.windows.net'
-app.config['MYSQL_USER'] = 'Youssef'
-app.config['MYSQL_PASSWORD'] = 'GBG_Acadmey!'
-app.config['MYSQL_DB'] = 'AZSQLDB'
-app.config['PORT'] = 1433
-app.config['MYSQL_SSL_CA'] = 'DigiCertGlobalRootG2.crt.pem'
-app.config['MYSQL_SQL_ENCRYPT'] = 'optional'
-app.config['MYSQL_SQL_SSL_VERIFY_SERVER_CERT'] = False
-
-=======
 app.config['AZURE_SQL_CONNECTION_STRING'] = (
     "DRIVER={ODBC Driver 17 for SQL Server};"
     f"SERVER={app.config['MYSQL_HOST']},{app.config['PORT']};"
@@ -31,7 +20,6 @@ app.config['AZURE_SQL_CONNECTION_STRING'] = (
     "TrustServerCertificate=no;"
     "Connection Timeout=30;"
 )
->>>>>>> Stashed changes
 
 
 @app.route('/')
