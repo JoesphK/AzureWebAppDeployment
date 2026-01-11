@@ -15,6 +15,8 @@ app.config['PORT'] = 1433
 app.config['MYSQL_SSL_CA'] = 'DigiCertGlobalRootG2.crt.pem'
 app.config['MYSQL_SQL_ENCRYPT'] = 'optional'
 app.config['MYSQL_SQL_SSL_VERIFY_SERVER_CERT'] = False
+
+
 mysql = MySQL(app)
 
 @app.route('/')
