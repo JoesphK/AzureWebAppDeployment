@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
-import os  # Import the os module
 
 app = Flask(__name__)
 
@@ -13,12 +12,12 @@ app.config['MYSQL_USER'] = 'Youssef'
 app.config['MYSQL_PASSWORD'] = 'GBG_Acadmey!'
 app.config['MYSQL_DB'] = 'AZSQLDB'
 app.config['PORT'] = 1433
-app.config['MYSQL_SSL_CA'] = os.path.join(os.path.dirname(__file__), 'DigiCertGlobalRootG2.crt.pem')  # Resolve path relative to app.py
+app.config['MYSQL_SSL_CA'] = 'DigiCertGlobalRootG2.crt.pem'
 app.config['MYSQL_SQL_ENCRYPT'] = 'optional'
 app.config['MYSQL_SQL_SSL_VERIFY_SERVER_CERT'] = False
 
-mysql = MySQL(app)
 
+mysql = MySQL(app)
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
@@ -40,14 +39,12 @@ def login():
             msg = 'Incorrect username/password!'
     return render_template('login.html', msg=msg)
 
-
 @app.route('/logout')
 def logout():
     session.pop('loggedin', None)
     session.pop('id', None)
     session.pop('username', None)
     return redirect(url_for('login'))
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -75,13 +72,11 @@ def register():
         msg = 'Please fill out the form!'
     return render_template('register.html', msg=msg)
 
-
 @app.route('/home')
 def home():
     if 'loggedin' in session:
         return render_template('index.html', username=session['username'])
     return redirect(url_for('login'))
-
 
 @app.route('/profile')
 def profile():
@@ -92,7 +87,6 @@ def profile():
         return render_template('profile.html', account=account)
     return redirect(url_for('login'))
 
-
 @app.route('/users')
 def users():
     if 'loggedin' in session:
@@ -101,7 +95,6 @@ def users():
         users = cursor.fetchall()
         return render_template('users.html', users=users)
     return redirect(url_for('login'))
-
 
 if __name__ == '__main__':
     app.run(debug=True)
