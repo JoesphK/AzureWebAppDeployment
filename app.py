@@ -12,7 +12,7 @@ def get_db_connection():
         'SERVER=serverazsqldb.database.windows.net;'
         'DATABASE=AZSQLDB;'
         'UID=Youssef@serverazsqldb;'
-        'PWD=GBG_Academy!;'
+        'PWD=GBG_Acadmey!;'
         'Encrypt=yes;'
         'TrustServerCertificate=no;'
     )
@@ -100,6 +100,21 @@ def health():
         return "DB connection OK"
     except Exception as e:
         return str(e), 500
+    
+
+@app.route('/profile')
+def profile():
+    if 'loggedin' in session:
+        return render_template('profile.html')
+    return redirect(url_for('login'))
+
+
+@app.route('/users')
+def users():
+    if 'loggedin' in session:
+        return render_template('users.html')
+    return redirect(url_for('login'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
