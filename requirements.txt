@@ -1,3 +1,2 @@
 Flask
 pyodbc
-Flask-MySQLdb
